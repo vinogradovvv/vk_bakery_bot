@@ -2,9 +2,8 @@ import asyncio
 import signal
 import sys
 
-from bakery_bot.utils.env_check import check_env
-
 from bakery_bot.bakery_bot import start_bot
+from bakery_bot.utils.env_check import check_env
 from config.logging_config import logger
 from services.session_service import SessionService
 
