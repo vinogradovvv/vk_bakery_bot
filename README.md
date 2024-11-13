@@ -27,8 +27,8 @@ Bakery Bot - это бот для VK, предназначенный для уп
 1. Клонируйте репозиторий:
 
     ```sh
-    git clone https://github.com/yourusername/bakery_bot.git
-    cd bakery_bot
+    git clone https://github.com/vinogradovvv/vk_bakery_bot.git
+    cd vk_bakery_bot
     ```
 
 2. Скопируйте или переименуйте файл переменных окружения для нужного окружения в каталоге `envs/`:
