@@ -5,6 +5,7 @@ from vk_api.utils import get_random_id
 from vk_api.vk_api import VkApiMethod
 
 from services.category_service import CategoryService
+from services.session_service import SessionService
 
 
 async def delete_category_handler(
@@ -26,6 +27,7 @@ async def delete_category_handler(
         state: The current state of the bot.
     """
     category_service = CategoryService()
+    session_service = SessionService()
     back_keyboard = gen_back_keyboard()
     menu_keyboard = await gen_menu_keyboard(is_admin)
 
@@ -46,9 +48,10 @@ async def delete_category_handler(
             keyboard=menu_keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
+        await session_service.save_user_session(event.user_id, state.to_json())
         return
 
-    category_name = event.text
+    category_name = state.category_name
     category = await category_service.get_category_by_name(category_name)
     if not category:
         vk.messages.send(
@@ -60,6 +63,7 @@ async def delete_category_handler(
         return
 
     await category_service.delete_category(category_name)
+    menu_keyboard = await gen_menu_keyboard(is_admin)
     vk.messages.send(
         user_id=event.user_id,
         random_id=get_random_id(),
@@ -67,3 +71,4 @@ async def delete_category_handler(
         keyboard=menu_keyboard.get_keyboard(),
     )
     state.back_to_main_menu()
+    await session_service.save_user_session(event.user_id, state.to_json())

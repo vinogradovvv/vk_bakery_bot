@@ -40,7 +40,7 @@ categories = {
             "image": "cheese_and_ham_pie.jpeg",
         },
         {
-            "name": "С картофелем и грибами,",
+            "name": "С картофелем и грибами",
             "description": "Пирог с картофелем и грибами",
             "image": "potato_pie.jpeg",
         },

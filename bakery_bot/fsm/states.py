@@ -21,8 +21,11 @@ class BotStates:
         "DELETE_PRODUCT",
     ]
 
-    def __init__(self):
-        self.state = None
+    def __init__(self, **kwargs):
+        self.state = kwargs.get("state", "START")
+        self.product_name = kwargs.get("product_name", None)
+        self.product_description = kwargs.get("product_description", None)
+        self.category_name = kwargs.get("category_name", None)
         self.machine = Machine(model=self, states=BotStates.states, initial="START")
 
         self.machine.add_transition(
@@ -91,6 +94,20 @@ class BotStates:
             getattr(self, event)()
         except MachineError as e:
             logger.error(f"FSM error: {e}")
+
+    def to_json(self):
+        return {
+            "state": self.state,
+            "product_name": self.product_name,
+            "product_description": self.product_description,
+            "category_name": self.category_name,
+        }
+
+    def load(self, **kwargs):
+        self.state = kwargs.get("state", "START")
+        self.product_name = kwargs.get("product_name", None)
+        self.product_description = kwargs.get("product_description", None)
+        self.category_name = kwargs.get("category_name", None)
 
     def is_start(self):
         return self.state == "START"

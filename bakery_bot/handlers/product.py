@@ -6,6 +6,7 @@ from vk_api.utils import get_random_id
 from vk_api.vk_api import VkApiMethod
 
 from services.product_service import ProductService
+from services.session_service import SessionService
 
 
 async def product_handler(
@@ -27,6 +28,7 @@ async def product_handler(
         gen_menu_keyboard (Callable): Function to generate a menu keyboard.
     """
     product_service = ProductService()
+    session_service = SessionService()
     product_name = event.text
     state.product_name = product_name
     back_keyboard = gen_back_keyboard()
@@ -40,6 +42,7 @@ async def product_handler(
             keyboard=menu_keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
+        await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     product = await product_service.get_product_by_name(product_name)
@@ -63,3 +66,4 @@ async def product_handler(
         keyboard=back_keyboard.get_keyboard(),
     )
     state.product()
+    await session_service.save_user_session(event.user_id, state.to_json())

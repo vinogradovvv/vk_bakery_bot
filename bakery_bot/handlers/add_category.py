@@ -5,6 +5,7 @@ from vk_api.utils import get_random_id
 from vk_api.vk_api import VkApiMethod
 
 from services.category_service import CategoryService
+from services.session_service import SessionService
 
 
 async def add_category_handler(
@@ -21,6 +22,7 @@ async def add_category_handler(
         state: The current state of the bot.
     """
     category_service = CategoryService()
+    session_service = SessionService()
 
     if not is_admin:
         vk.messages.send(
@@ -39,6 +41,7 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.new_category_name()
+        await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if event.text.startswith("Назад"):
@@ -50,6 +53,7 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
+        await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_new_category_name():
@@ -79,3 +83,4 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.main_menu()
+        await session_service.save_user_session(event.user_id, state.to_json())

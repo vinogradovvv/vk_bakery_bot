@@ -17,13 +17,13 @@ from bakery_bot.keyboards.product import gen_product_keyboard
 from bakery_bot.utils.admin_utils import admin_check
 from config.logging_config import logger
 from db.database import init_db
+from services.session_service import SessionService
 
 API_TOKEN = os.getenv("API_TOKEN")
 vk_session = vk_api.VkApi(token=API_TOKEN)
 longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
-user_states = {}
-# state = BotStates()
+session_service = SessionService()
 
 
 async def start_bot() -> None:
@@ -33,9 +33,10 @@ async def start_bot() -> None:
     for event in longpoll.listen():
         peer_id = event.peer_id
         is_admin = admin_check(event.peer_id)
-        if peer_id not in user_states:
-            user_states[peer_id] = BotStates()
-        state = user_states[peer_id]
+        user_state = await session_service.load_user_session(peer_id)
+        state = BotStates()
+        if user_state:
+            state.load(**user_state)
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             if state.is_start():
                 await start_handler(event, vk, state, is_admin, gen_main_menu_keyboard)

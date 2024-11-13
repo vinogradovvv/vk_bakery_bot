@@ -10,5 +10,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/test_data
 
+  redis:
+    image: redis:latest
+    container_name: bakery_bot_test_redis
+    ports:
+      - "6379:6379"
+
 volumes:
   postgres_data:

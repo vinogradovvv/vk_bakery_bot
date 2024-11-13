@@ -6,6 +6,7 @@ from vk_api.vk_api import VkApiMethod
 
 from services.category_service import CategoryService
 from services.product_service import ProductService
+from services.session_service import SessionService
 
 
 async def category_handler(
@@ -28,6 +29,7 @@ async def category_handler(
     """
     category_service = CategoryService()
     product_service = ProductService()
+    session_service = SessionService()
 
     category_name = event.text
     category = await category_service.get_category_by_name(category_name)
@@ -59,3 +61,4 @@ async def category_handler(
     )
 
     state.category()
+    await session_service.save_user_session(event.user_id, state.to_json())
