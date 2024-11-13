@@ -29,7 +29,7 @@ async def category_handler(
     """
     category_service = CategoryService()
     product_service = ProductService()
-    session_service = SessionService()
+    ses_service = SessionService()
 
     category_name = event.text
     category = await category_service.get_category_by_name(category_name)
@@ -61,4 +61,5 @@ async def category_handler(
     )
 
     state.category()
-    await session_service.save_user_session(event.user_id, state.to_json())
+    async with ses_service.manage_session() as session_service:
+        await session_service.save_user_session(event.user_id, state.to_json())

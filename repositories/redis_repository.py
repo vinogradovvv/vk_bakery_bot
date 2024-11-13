@@ -1,4 +1,3 @@
-# redis_repository.py
 import redis.asyncio as aioredis
 import json
 import os

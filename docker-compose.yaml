@@ -17,6 +17,16 @@ services:
     networks:
       - docker_network
 
+  bakery_bot_redis:
+    image: redis:latest
+    restart: always
+    container_name: bakery_bot_redis
+    env_file: ./envs/prod.env
+    ports:
+      - "6379:6379"
+    networks:
+      - docker_network
+
   bakery_bot:
     restart: always
     env_file:

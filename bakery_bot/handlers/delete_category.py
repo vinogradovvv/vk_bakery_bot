@@ -27,7 +27,7 @@ async def delete_category_handler(
         state: The current state of the bot.
     """
     category_service = CategoryService()
-    session_service = SessionService()
+    ses_service = SessionService()
     back_keyboard = gen_back_keyboard()
     menu_keyboard = await gen_menu_keyboard(is_admin)
 
@@ -48,7 +48,8 @@ async def delete_category_handler(
             keyboard=menu_keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     category_name = state.category_name
@@ -71,4 +72,5 @@ async def delete_category_handler(
         keyboard=menu_keyboard.get_keyboard(),
     )
     state.back_to_main_menu()
-    await session_service.save_user_session(event.user_id, state.to_json())
+    async with ses_service.manage_session() as session_service:
+        await session_service.save_user_session(event.user_id, state.to_json())

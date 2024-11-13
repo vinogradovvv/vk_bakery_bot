@@ -33,7 +33,7 @@ async def add_product_handler(
     back_keyboard = gen_back_keyboard()
     product_service = ProductService()
     category_service = CategoryService()
-    session_service = SessionService()
+    ses_service = SessionService()
 
     if not is_admin:
         vk.messages.send(
@@ -52,7 +52,8 @@ async def add_product_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.main_menu()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_category():
@@ -63,7 +64,8 @@ async def add_product_handler(
             keyboard=back_keyboard.get_keyboard(),
         )
         state.new_product_name()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_new_product_name():
@@ -78,7 +80,8 @@ async def add_product_handler(
             )
             return
         state.product_name = product_name
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         vk.messages.send(
             user_id=event.user_id,
             random_id=get_random_id(),
@@ -86,7 +89,8 @@ async def add_product_handler(
             keyboard=back_keyboard.get_keyboard(),
         )
         state.new_product_description()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_new_product_description():
@@ -100,7 +104,8 @@ async def add_product_handler(
             keyboard=back_keyboard.get_keyboard(),
         )
         state.new_product_photo()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_new_product_photo():
@@ -185,7 +190,8 @@ async def add_product_handler(
         )
 
         state.category()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
 
         product_keyboard = await gen_product_keyboard(is_admin, state.category_name)
         vk.messages.send(

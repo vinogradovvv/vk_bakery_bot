@@ -23,7 +23,7 @@ API_TOKEN = os.getenv("API_TOKEN")
 vk_session = vk_api.VkApi(token=API_TOKEN)
 longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
-session_service = SessionService()
+ses_service = SessionService()
 
 
 async def start_bot() -> None:
@@ -33,7 +33,8 @@ async def start_bot() -> None:
     for event in longpoll.listen():
         peer_id = event.peer_id
         is_admin = admin_check(event.peer_id)
-        user_state = await session_service.load_user_session(peer_id)
+        async with ses_service.manage_session() as session_service:
+            user_state = await session_service.load_user_session(peer_id)
         state = BotStates()
         if user_state:
             state.load(**user_state)

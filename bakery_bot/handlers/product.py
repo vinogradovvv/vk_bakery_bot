@@ -28,7 +28,7 @@ async def product_handler(
         gen_menu_keyboard (Callable): Function to generate a menu keyboard.
     """
     product_service = ProductService()
-    session_service = SessionService()
+    ses_service = SessionService()
     product_name = event.text
     state.product_name = product_name
     back_keyboard = gen_back_keyboard()
@@ -42,7 +42,8 @@ async def product_handler(
             keyboard=menu_keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     product = await product_service.get_product_by_name(product_name)
@@ -66,4 +67,5 @@ async def product_handler(
         keyboard=back_keyboard.get_keyboard(),
     )
     state.product()
-    await session_service.save_user_session(event.user_id, state.to_json())
+    async with ses_service.manage_session() as session_service:
+        await session_service.save_user_session(event.user_id, state.to_json())

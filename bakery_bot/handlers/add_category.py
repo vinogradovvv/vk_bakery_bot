@@ -22,7 +22,7 @@ async def add_category_handler(
         state: The current state of the bot.
     """
     category_service = CategoryService()
-    session_service = SessionService()
+    ses_service = SessionService()
 
     if not is_admin:
         vk.messages.send(
@@ -41,7 +41,8 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.new_category_name()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if event.text.startswith("Назад"):
@@ -53,7 +54,8 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.back_to_main_menu()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
         return
 
     if state.is_new_category_name():
@@ -83,4 +85,5 @@ async def add_category_handler(
             keyboard=keyboard.get_keyboard(),
         )
         state.main_menu()
-        await session_service.save_user_session(event.user_id, state.to_json())
+        async with ses_service.manage_session() as session_service:
+            await session_service.save_user_session(event.user_id, state.to_json())
