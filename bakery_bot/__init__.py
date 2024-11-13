@@ -1,3 +1,3 @@
 import sys
 
-sys.path.append('./keyboards')
+sys.path.append("..")

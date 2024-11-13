@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  bakery_bot_db:
+    image: postgres:latest
+    restart: always
+    container_name: bakery_bot_db
+    env_file: ./envs/prod.env
+    environment:
+      - log_destination=stderr
+      - logging_collector=on
+      - log_directory=/var/log/postgres_logs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - docker_network
+
+  bakery_bot:
+    restart: always
+    env_file:
+      - envs/prod.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bakery_bot
+    environment:
+      DB_HOST: bakery_bot_db
+    stop_signal: SIGTERM
+    depends_on:
+      - bakery_bot_db
+    networks:
+      - docker_network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  docker_network:

@@ -1,16 +1,25 @@
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-from repositories.category_repository import CategoryRepository
-from repositories.product_repository import ProductRepository
-from db.database import get_session
+
+from services.category_service import CategoryService
+from services.product_service import ProductService
+
 from .back import add_back_button
 
 
-async def gen_product_keyboard(is_admin, category_name):
-    async with get_session() as db_session:
-        category_repo = CategoryRepository(db_session)
-        category = await category_repo.get_category_by_name(category_name)
-        product_repo = ProductRepository(db_session)
-        products = await product_repo.get_products_by_category_id(category.id)
+async def gen_product_keyboard(is_admin: bool, category_name: str) -> VkKeyboard:
+    """
+    Generates a product keyboard with products and admin options for a given category.
+    Args:
+        is_admin (bool): Flag indicating if the user is an admin.
+        category_name (str): The name of the category for which to generate the keyboard.
+    Returns:
+        VkKeyboard: The generated product keyboard.
+    """
+    category_service = CategoryService()
+    product_service = ProductService()
+
+    category = await category_service.get_category_by_name(category_name)
+    products = await product_service.get_products_by_category_id(category.id)
 
     keyboard = VkKeyboard(one_time=True)
 
